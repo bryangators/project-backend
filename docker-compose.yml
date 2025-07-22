@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgresdb:
+    image: postgres:17
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRESDB_USER
+      - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRESDB_DATABASE
+    ports: 
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgres
+  
+  app:
+    depends_on:
+      - postgresdb
+    build: ./app
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+  
+volumes:
+  db:
