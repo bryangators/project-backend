@@ -1,13 +1,16 @@
 import { RequestHandler } from "express";
-import { fetchProject } from "../services/getProject";
+import { getProjectById } from "../services/getProject";
 
-export const getProject: RequestHandler<{userId: string}> = async (req, res) => {
+export const getProject: RequestHandler<{projectId: string}> = async (req, res) => {
     try {
-        const userId = parseInt(req.params.userId);
+        const projectId = parseInt(req.params.projectId);
 
-        const result = await fetchProject(userId);
+        const project = await getProjectById(projectId);
+
+        if (!project)
+            return res.status(404).json({ error: `Project not found for id: ${projectId}`})
         
-        res.status(200).json({result});
+        res.status(200).json({result: project});
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
     }
